@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentfence"
+version = "0.1.0"
+description = "Static security scanner for MCP and AI-agent configuration files"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Kwondh0321" }]
+keywords = ["mcp", "security", "ai-agents", "sarif", "static-analysis"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Security",
+]
+
+[project.scripts]
+agentfence = "agentfence.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
