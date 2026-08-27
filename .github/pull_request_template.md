@@ -9,3 +9,17 @@
 - [ ] 동작이 바뀐 경우 문서도 수정했습니다.
 - [ ] 실제 인증정보·개인정보·기밀 자료를 추가하지 않았습니다.
 - [ ] 보안 및 호환성 영향을 검토했습니다.
+
+---
+
+## Summary (English)
+
+Describe the problem and the smallest change that solves it.
+
+## Verification
+
+- [ ] I added or updated tests.
+- [ ] The complete local test suite passes.
+- [ ] I updated both language versions of affected documentation.
+- [ ] I did not add real credentials, personal data, or confidential material.
+- [ ] I reviewed security and compatibility impacts.

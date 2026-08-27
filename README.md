@@ -1,5 +1,7 @@
 # AgentFence
 
+한국어 | [English](README.en.md)
+
 AgentFence는 MCP와 AI 에이전트 설정 파일을 로컬에서 검사하는 보안 도구입니다. 실제 비밀값, 과도한 파일시스템 권한, 범용 셸 실행, 와일드카드 Origin, 평문 HTTP, 토큰 패스스루, 버전이 고정되지 않은 `npx` 패키지를 탐지합니다.
 
 모델이나 API 키 없이 동작하며 텍스트·JSON·SARIF 보고서를 지원합니다.
@@ -7,7 +9,11 @@ AgentFence는 MCP와 AI 에이전트 설정 파일을 로컬에서 검사하는 
 ## 설치 및 사용
 
 ```bash
-python -m pip install -e .
+git clone https://github.com/Kwondh0321/agentfence.git
+cd agentfence
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m pip install .
 agentfence .
 agentfence .mcp.json --format sarif --output agentfence.sarif
 ```
@@ -39,4 +45,3 @@ agentfence examples/mcp.json --fail-on none
 ## 라이선스
 
 MIT
-

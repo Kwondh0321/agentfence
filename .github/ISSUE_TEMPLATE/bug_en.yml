@@ -1,0 +1,34 @@
+name: Bug report (English)
+description: Report a problem reproducible with synthetic or public examples
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for helping. Do not attach credentials, personal data, or confidential files.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include minimal reproduction input, the command, and actual output.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include the operating system and runtime version.
+    validations:
+      required: true

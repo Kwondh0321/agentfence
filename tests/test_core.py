@@ -23,13 +23,29 @@ class AgentFenceTests(unittest.TestCase):
         self.assertTrue({"AF001", "AF002", "AF003", "AF005"}.issubset(ids))
 
     def test_placeholders_are_not_reported_as_credentials(self):
-        config = {"env": {"API_KEY": "${SERVICE_API_KEY}", "PASSWORD": "<from-secret-store>"}}
+        config = {
+            "env": {"API_KEY": "${SERVICE_API_KEY}", "PASSWORD": "<from-secret-store>"}
+        }
         ids = {finding.rule_id for finding in scan_config(config)}
         self.assertNotIn("AF001", ids)
 
     def test_detects_unpinned_npx_package(self):
-        findings = scan_config({"server": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem"]}})
+        findings = scan_config(
+            {
+                "server": {
+                    "command": "npx",
+                    "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+                }
+            }
+        )
         self.assertIn("AF007", {finding.rule_id for finding in findings})
+
+        mutable = scan_config({"server": {"command": "npx", "args": ["tool@latest"]}})
+        pinned = scan_config(
+            {"server": {"command": "npx", "args": ["@scope/tool@1.2.3"]}}
+        )
+        self.assertIn("AF007", {finding.rule_id for finding in mutable})
+        self.assertNotIn("AF007", {finding.rule_id for finding in pinned})
 
     def test_sarif_contains_rule_and_result(self):
         findings = scan_config({"url": "http://example.com/mcp"})
@@ -41,11 +57,24 @@ class AgentFenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             config = root / ".mcp.json"
-            config.write_text(json.dumps({"env": {"API_KEY": "literal"}}), encoding="utf-8")
+            config.write_text(
+                json.dumps({"env": {"API_KEY": "literal"}}), encoding="utf-8"
+            )
             self.assertEqual([config], discover_configs(root))
-            self.assertEqual(1, main([str(root), "--format", "json", "--fail-on", "high"]))
+            self.assertEqual(
+                1, main([str(root), "--format", "json", "--fail-on", "high"])
+            )
+
+    def test_discovery_ignores_unrelated_config_toml(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            unrelated = root / "config.toml"
+            unrelated.write_text("name = 'application'\n", encoding="utf-8")
+            codex = root / ".codex" / "config.toml"
+            codex.parent.mkdir()
+            codex.write_text("model = 'example'\n", encoding="utf-8")
+            self.assertEqual([codex], discover_configs(root))
 
 
 if __name__ == "__main__":
     unittest.main()
-

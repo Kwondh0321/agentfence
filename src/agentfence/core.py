@@ -4,14 +4,22 @@ from __future__ import annotations
 
 import json
 import re
-import tomllib
+from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
+import tomllib
 
 SEVERITY_ORDER = {"low": 1, "medium": 2, "high": 3, "critical": 4}
-SECRET_WORDS = ("api_key", "apikey", "access_token", "secret", "password", "private_key")
+SECRET_WORDS = (
+    "api_key",
+    "apikey",
+    "access_token",
+    "secret",
+    "password",
+    "private_key",
+)
 BROAD_PATHS = {"/", "/*", "~", "~/", "$home", "${home}", ".", "..", "../"}
 SHELLS = {"bash", "sh", "zsh", "fish", "cmd", "cmd.exe", "powershell", "pwsh"}
 
@@ -36,7 +44,7 @@ def load_config(path: Path) -> dict[str, Any]:
     else:
         value = json.loads(raw)
     if not isinstance(value, dict):
-        raise ValueError(f"{path} must contain an object at the top level")
+        raise TypeError(f"{path} must contain an object at the top level")
     return value
 
 
@@ -48,20 +56,29 @@ def discover_configs(target: Path) -> list[Path]:
         raise FileNotFoundError(target)
 
     files: set[Path] = set()
-    exact_names = {".mcp.json", "mcp.json", "mcp-config.json", "config.toml"}
+    exact_names = {".mcp.json", "mcp.json", "mcp-config.json"}
     ignored = {".git", "node_modules", ".venv", "dist", "build"}
     for path in target.rglob("*"):
-        if any(part in ignored for part in path.parts) or not path.is_file():
+        if (
+            any(part in ignored for part in path.parts)
+            or path.is_symlink()
+            or not path.is_file()
+        ):
             continue
         lower = path.name.lower()
-        if lower in exact_names or ("mcp" in lower and path.suffix.lower() in {".json", ".toml"}):
-            files.add(path)
-        elif path.name == "config.toml" and ".codex" in path.parts:
+        if (
+            lower in exact_names
+            or ("mcp" in lower and path.suffix.lower() in {".json", ".toml"})
+            or path.name == "config.toml"
+            and ".codex" in path.parts
+        ):
             files.add(path)
     return sorted(files)
 
 
-def _walk(value: Any, path: tuple[str, ...] = ()) -> Iterable[tuple[tuple[str, ...], Any]]:
+def _walk(
+    value: Any, path: tuple[str, ...] = ()
+) -> Iterable[tuple[tuple[str, ...], Any]]:
     yield path, value
     if isinstance(value, dict):
         for key, child in value.items():
@@ -93,23 +110,37 @@ def _first_package(args: list[Any]) -> str | None:
 
 
 def _is_unpinned_package(package: str) -> bool:
-    if package.startswith("@"):
-        return package.count("@") == 1
-    return "@" not in package
+    separator = package.rfind("@")
+    if separator <= 0:
+        return True
+    version = package[separator + 1 :].strip().lower()
+    return (
+        not version
+        or version in {"*", "latest", "next", "canary"}
+        or any(char in version for char in "^~<>")
+    )
 
 
 def scan_config(config: dict[str, Any], source: str = "config") -> list[Finding]:
     """Run deterministic security rules against a parsed configuration."""
     findings: list[Finding] = []
 
-    def add(rule: str, severity: str, message: str, path: tuple[str, ...], remediation: str) -> None:
-        findings.append(Finding(rule, severity, message, f"{source}:{_location(path)}", remediation))
+    def add(
+        rule: str, severity: str, message: str, path: tuple[str, ...], remediation: str
+    ) -> None:
+        findings.append(
+            Finding(rule, severity, message, f"{source}:{_location(path)}", remediation)
+        )
 
     for path, value in _walk(config):
         key = path[-1].lower() if path else ""
         key_path = ".".join(part.lower() for part in path)
 
-        if isinstance(value, str) and any(word in key for word in SECRET_WORDS) and not _is_placeholder(value):
+        if (
+            isinstance(value, str)
+            and any(word in key for word in SECRET_WORDS)
+            and not _is_placeholder(value)
+        ):
             add(
                 "AF001",
                 "critical",
@@ -129,7 +160,11 @@ def scan_config(config: dict[str, Any], source: str = "config") -> list[Finding]
                     "범위가 제한된 실행 파일을 직접 호출하고 모든 인수를 검증하세요.",
                 )
 
-        if isinstance(value, str) and "args" in key_path and value.strip().lower() in BROAD_PATHS:
+        if (
+            isinstance(value, str)
+            and "args" in key_path
+            and value.strip().lower() in BROAD_PATHS
+        ):
             add(
                 "AF003",
                 "high",
@@ -150,7 +185,9 @@ def scan_config(config: dict[str, Any], source: str = "config") -> list[Finding]
                 )
 
         if "token_passthrough" in key or "forward_authorization" in key:
-            enabled = value is True or (isinstance(value, str) and value.lower() in {"true", "enabled", "yes"})
+            enabled = value is True or (
+                isinstance(value, str) and value.lower() in {"true", "enabled", "yes"}
+            )
             if enabled:
                 add(
                     "AF005",
@@ -160,7 +197,11 @@ def scan_config(config: dict[str, Any], source: str = "config") -> list[Finding]
                     "각 하위 리소스마다 대상이 제한된 별도 토큰을 발급하세요.",
                 )
 
-        if isinstance(value, str) and value.startswith("http://") and not re.match(r"http://(localhost|127\.0\.0\.1)(:|/|$)", value):
+        if (
+            isinstance(value, str)
+            and value.startswith("http://")
+            and not re.match(r"http://(localhost|127\.0\.0\.1)(:|/|$)", value)
+        ):
             add(
                 "AF006",
                 "medium",
@@ -174,7 +215,11 @@ def scan_config(config: dict[str, Any], source: str = "config") -> list[Finding]
             continue
         command = value.get("command") or value.get("cmd")
         args = value.get("args", [])
-        if isinstance(command, str) and Path(command).name.lower() == "npx" and isinstance(args, list):
+        if (
+            isinstance(command, str)
+            and Path(command).name.lower() == "npx"
+            and isinstance(args, list)
+        ):
             package = _first_package(args)
             if package and _is_unpinned_package(package):
                 add(
@@ -186,7 +231,10 @@ def scan_config(config: dict[str, Any], source: str = "config") -> list[Finding]
                 )
 
     unique = {(f.rule_id, f.location, f.message): f for f in findings}
-    return sorted(unique.values(), key=lambda item: (-SEVERITY_ORDER[item.severity], item.location, item.rule_id))
+    return sorted(
+        unique.values(),
+        key=lambda item: (-SEVERITY_ORDER[item.severity], item.location, item.rule_id),
+    )
 
 
 def to_sarif(findings: list[Finding]) -> dict[str, Any]:
@@ -201,7 +249,9 @@ def to_sarif(findings: list[Finding]) -> dict[str, Any]:
                 "id": finding.rule_id,
                 "shortDescription": {"text": finding.message},
                 "help": {"text": finding.remediation},
-                "properties": {"security-severity": str(SEVERITY_ORDER[finding.severity] * 2.5)},
+                "properties": {
+                    "security-severity": str(SEVERITY_ORDER[finding.severity] * 2.5)
+                },
             },
         )
         source, _, logical = finding.location.partition(":")
@@ -223,7 +273,13 @@ def to_sarif(findings: list[Finding]) -> dict[str, Any]:
         "version": "2.1.0",
         "runs": [
             {
-                "tool": {"driver": {"name": "AgentFence", "version": "0.1.0", "rules": list(rules.values())}},
+                "tool": {
+                    "driver": {
+                        "name": "AgentFence",
+                        "version": "0.1.0",
+                        "rules": list(rules.values()),
+                    }
+                },
                 "results": results,
             }
         ],

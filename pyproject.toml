@@ -17,9 +17,16 @@ classifiers = [
   "Topic :: Security",
 ]
 
+[project.optional-dependencies]
+dev = ["ruff==0.16.4"]
+
+[project.urls]
+Homepage = "https://github.com/Kwondh0321/agentfence"
+Repository = "https://github.com/Kwondh0321/agentfence.git"
+Issues = "https://github.com/Kwondh0321/agentfence/issues"
+
 [project.scripts]
 agentfence = "agentfence.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
