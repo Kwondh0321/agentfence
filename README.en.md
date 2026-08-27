@@ -1,6 +1,6 @@
 # AgentFence
 
-[한국어](README.md) | English
+[한국어](README.md) | English | [Changelog / 변경 기록](CHANGELOG.md)
 
 AgentFence is a deterministic, local-first security scanner for MCP and AI-agent configuration files. It detects literal credentials, general-purpose shell launchers, overly broad filesystem grants, wildcard origins, token passthrough, plaintext remote HTTP endpoints, and unpinned `npx` packages.
 
