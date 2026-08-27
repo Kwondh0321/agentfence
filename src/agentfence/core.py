@@ -4,12 +4,11 @@ from __future__ import annotations
 
 import json
 import re
+import tomllib
 from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
-
-import tomllib
 
 SEVERITY_ORDER = {"low": 1, "medium": 2, "high": 3, "critical": 4}
 SECRET_WORDS = (
