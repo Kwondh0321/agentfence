@@ -1,12 +1,11 @@
-## Summary
+## 변경 요약
 
-Describe the problem and the smallest change that solves it.
+해결하려는 문제와 이를 해결하는 최소 변경을 설명해 주세요.
 
-## Verification
+## 검증
 
-- [ ] Tests added or updated
-- [ ] Full local test command passes
-- [ ] Documentation updated when behavior changed
-- [ ] No real credentials, personal data, or confidential fixtures added
-- [ ] Security and compatibility impact reviewed
-
+- [ ] 테스트를 추가하거나 수정했습니다.
+- [ ] 전체 로컬 테스트가 통과합니다.
+- [ ] 동작이 바뀐 경우 문서도 수정했습니다.
+- [ ] 실제 인증정보·개인정보·기밀 자료를 추가하지 않았습니다.
+- [ ] 보안 및 호환성 영향을 검토했습니다.

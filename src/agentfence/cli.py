@@ -11,15 +11,15 @@ from .core import SEVERITY_ORDER, discover_configs, load_config, scan_config, to
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Audit MCP and AI-agent configuration files.")
-    parser.add_argument("target", nargs="?", default=".", help="Configuration file or directory to scan")
+    parser = argparse.ArgumentParser(description="MCP와 AI 에이전트 설정 파일의 보안 위험을 검사합니다.")
+    parser.add_argument("target", nargs="?", default=".", help="검사할 설정 파일 또는 폴더")
     parser.add_argument("--format", choices=("text", "json", "sarif"), default="text")
-    parser.add_argument("--output", type=Path, help="Write the report to a file")
+    parser.add_argument("--output", type=Path, help="보고서를 저장할 파일")
     parser.add_argument(
         "--fail-on",
         choices=("none", "low", "medium", "high", "critical"),
         default="high",
-        help="Return exit code 1 at or above this severity",
+        help="지정한 심각도 이상이면 종료 코드 1을 반환합니다",
     )
     return parser
 
@@ -40,8 +40,8 @@ def main(argv: list[str] | None = None) -> int:
     elif args.format == "sarif":
         rendered = json.dumps(to_sarif(findings), indent=2)
     else:
-        lines = [f"AgentFence scanned {len(paths)} file(s): {len(findings)} finding(s)"]
-        lines.extend(f"[{f.severity.upper()}] {f.rule_id} {f.location}\n  {f.message}\n  Fix: {f.remediation}" for f in findings)
+        lines = [f"AgentFence 검사 완료: 파일 {len(paths)}개, 발견 항목 {len(findings)}개"]
+        lines.extend(f"[{f.severity.upper()}] {f.rule_id} {f.location}\n  {f.message}\n  조치: {f.remediation}" for f in findings)
         rendered = "\n".join(lines)
 
     if args.output:
@@ -58,4 +58,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

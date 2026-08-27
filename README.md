@@ -1,10 +1,10 @@
 # AgentFence
 
-AgentFence is a deterministic, local-first security scanner for MCP and AI-agent configuration files. It identifies literal credentials, broad filesystem grants, shell launchers, wildcard origins, plaintext remote endpoints, token passthrough, and unpinned `npx` packages.
+AgentFence는 MCP와 AI 에이전트 설정 파일을 로컬에서 검사하는 보안 도구입니다. 실제 비밀값, 과도한 파일시스템 권한, 범용 셸 실행, 와일드카드 Origin, 평문 HTTP, 토큰 패스스루, 버전이 고정되지 않은 `npx` 패키지를 탐지합니다.
 
-No model or API key is required. Reports can be emitted as human-readable text, JSON, or SARIF for GitHub code scanning.
+모델이나 API 키 없이 동작하며 텍스트·JSON·SARIF 보고서를 지원합니다.
 
-## Install and run
+## 설치 및 사용
 
 ```bash
 python -m pip install -e .
@@ -12,23 +12,23 @@ agentfence .
 agentfence .mcp.json --format sarif --output agentfence.sarif
 ```
 
-The default exit policy fails on `high` and `critical` findings. Use `--fail-on medium`, `--fail-on low`, or `--fail-on none` to change it.
+기본값은 `high` 이상 발견 시 종료 코드 1을 반환합니다. `--fail-on medium`, `--fail-on low`, `--fail-on none`으로 기준을 바꿀 수 있습니다.
 
-## Rules
+## 검사 규칙
 
-| Rule | Severity | Detects |
+| 규칙 | 심각도 | 검사 내용 |
 | --- | --- | --- |
-| AF001 | Critical | Literal values in credential-like fields |
-| AF002 | High | General-purpose shell launchers |
-| AF003 | High | Broad filesystem scopes in tool arguments |
-| AF004 | High | Wildcard origin allowlists |
-| AF005 | Critical | Token passthrough settings |
-| AF006 | Medium | Plaintext non-local HTTP endpoints |
-| AF007 | Medium | Unpinned packages executed through `npx` |
+| AF001 | Critical | 인증정보로 보이는 필드의 실제 값 |
+| AF002 | High | 범용 셸 실행 |
+| AF003 | High | 지나치게 넓은 파일시스템 범위 |
+| AF004 | High | 와일드카드 Origin 허용 |
+| AF005 | Critical | 토큰 패스스루 |
+| AF006 | Medium | 외부 평문 HTTP 주소 |
+| AF007 | Medium | 버전이 고정되지 않은 `npx` 패키지 |
 
-AgentFence reports configuration risks; it does not prove that a server is safe. Review findings in context and test changes before deployment.
+AgentFence 결과는 검토 신호이며 서버의 안전성을 보증하지 않습니다.
 
-## Development
+## 개발
 
 ```bash
 python -m pip install -e .
@@ -36,6 +36,7 @@ python -m unittest discover -s tests -v
 agentfence examples/mcp.json --fail-on none
 ```
 
-## License
+## 라이선스
 
 MIT
+

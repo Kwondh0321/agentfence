@@ -1,6 +1,5 @@
-# Security policy
+# 보안 정책
 
-Please report suspected vulnerabilities privately through GitHub's security advisory feature. Do not open a public issue for an unpatched vulnerability.
+의심되는 취약점은 GitHub의 비공개 Security Advisory 기능으로 알려 주세요. 패치되지 않은 취약점을 공개 이슈로 작성하지 마세요.
 
-Include affected versions, a minimal reproduction, impact, and any suggested mitigation. Maintainers will acknowledge valid reports and coordinate a fix before public disclosure.
-
+영향받는 버전, 최소 재현 방법, 예상 영향과 가능한 완화책을 함께 적어 주세요. 유효한 제보는 확인 후 공개 전에 수정 일정을 조율합니다.

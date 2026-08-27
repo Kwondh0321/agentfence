@@ -1,35 +1,34 @@
-name: Bug report
-description: Report a reproducible problem with synthetic or public fixtures
-title: "[Bug]: "
+name: 버그 신고
+description: 합성 또는 공개 예제로 재현 가능한 문제를 알려 주세요
+title: "[버그]: "
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
-      value: Thanks for helping improve the project. Never include credentials, private data, or confidential files.
+      value: 프로젝트 개선에 참여해 주셔서 감사합니다. 인증정보, 개인정보, 기밀 파일은 첨부하지 마세요.
   - type: textarea
     id: problem
     attributes:
-      label: What happened?
-      description: Include the smallest reproducible input and the observed output.
+      label: 어떤 문제가 발생했나요?
+      description: 문제를 재현하는 최소 입력과 실제 출력을 적어 주세요.
     validations:
       required: true
   - type: textarea
     id: expected
     attributes:
-      label: Expected behavior
+      label: 기대한 동작
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: Version or commit
+      label: 버전 또는 커밋
     validations:
       required: true
   - type: textarea
     id: environment
     attributes:
-      label: Environment
-      description: Operating system, runtime version, and exact command.
+      label: 실행 환경
+      description: 운영체제, 런타임 버전, 실행한 명령을 적어 주세요.
     validations:
       required: true
-

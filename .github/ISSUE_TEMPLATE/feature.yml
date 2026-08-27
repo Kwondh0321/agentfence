@@ -1,24 +1,23 @@
-name: Feature request
-description: Propose a focused, testable improvement
-title: "[Feature]: "
+name: 기능 제안
+description: 범위가 분명하고 검증 가능한 개선을 제안해 주세요
+title: "[기능]: "
 labels: ["enhancement"]
 body:
   - type: textarea
     id: problem
     attributes:
-      label: Problem
-      description: What user need or workflow gap should this solve?
+      label: 해결하려는 문제
+      description: 어떤 사용자 요구나 작업 흐름의 빈틈을 해결해야 하나요?
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Proposed behavior
-      description: Include a small input/output example where possible.
+      label: 제안하는 동작
+      description: 가능하면 작은 입력·출력 예제를 포함해 주세요.
     validations:
       required: true
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternatives and tradeoffs
-
+      label: 대안과 트레이드오프

@@ -1,4 +1,3 @@
-# Code of Conduct
+# 행동 강령
 
-We are committed to a welcoming, harassment-free community. Be respectful, assume good intent, focus criticism on ideas and code, and protect other contributors' privacy. Maintainers may remove harmful content or restrict participation when needed to keep the project safe and constructive.
-
+누구나 안전하게 참여할 수 있는 커뮤니티를 지향합니다. 서로를 존중하고, 선의를 전제로 소통하며, 비판은 사람보다 아이디어와 코드에 집중해 주세요. 다른 기여자의 개인정보를 보호해야 합니다. 안전하고 생산적인 협업을 위해 관리자는 유해한 콘텐츠를 삭제하거나 참여를 제한할 수 있습니다.

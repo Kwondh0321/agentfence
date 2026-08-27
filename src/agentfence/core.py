@@ -113,9 +113,9 @@ def scan_config(config: dict[str, Any], source: str = "config") -> list[Finding]
             add(
                 "AF001",
                 "critical",
-                "A credential-like field contains a literal value.",
+                "인증정보로 보이는 필드에 실제 값이 직접 기록돼 있습니다.",
                 path,
-                "Remove the literal and inject the credential from a secret store or environment variable.",
+                "직접 기록한 값을 제거하고 비밀 저장소 또는 환경변수로 주입하세요.",
             )
 
         if isinstance(value, str) and key in {"command", "cmd", "executable"}:
@@ -124,18 +124,18 @@ def scan_config(config: dict[str, Any], source: str = "config") -> list[Finding]
                 add(
                     "AF002",
                     "high",
-                    f"The server launches a general-purpose shell ({command}).",
+                    f"서버가 범용 셸({command})을 실행합니다.",
                     path,
-                    "Invoke a narrowly scoped executable directly and validate every argument.",
+                    "범위가 제한된 실행 파일을 직접 호출하고 모든 인수를 검증하세요.",
                 )
 
         if isinstance(value, str) and "args" in key_path and value.strip().lower() in BROAD_PATHS:
             add(
                 "AF003",
                 "high",
-                f"A tool is granted a broad filesystem path ({value!r}).",
+                f"도구에 지나치게 넓은 파일시스템 경로({value!r})가 허용됐습니다.",
                 path,
-                "Grant only the smallest project directory required by the tool.",
+                "도구에 필요한 최소 프로젝트 폴더만 허용하세요.",
             )
 
         if key in {"allowed_origins", "origins", "cors_origins"}:
@@ -144,9 +144,9 @@ def scan_config(config: dict[str, Any], source: str = "config") -> list[Finding]
                 add(
                     "AF004",
                     "high",
-                    "A network origin allowlist contains a wildcard.",
+                    "네트워크 Origin 허용 목록에 와일드카드가 포함돼 있습니다.",
                     path,
-                    "List trusted HTTPS origins explicitly.",
+                    "신뢰하는 HTTPS Origin을 명시적으로 나열하세요.",
                 )
 
         if "token_passthrough" in key or "forward_authorization" in key:
@@ -155,18 +155,18 @@ def scan_config(config: dict[str, Any], source: str = "config") -> list[Finding]
                 add(
                     "AF005",
                     "critical",
-                    "Token passthrough appears to be enabled.",
+                    "토큰 패스스루가 활성화된 것으로 보입니다.",
                     path,
-                    "Issue a separate audience-bound token for every downstream resource.",
+                    "각 하위 리소스마다 대상이 제한된 별도 토큰을 발급하세요.",
                 )
 
         if isinstance(value, str) and value.startswith("http://") and not re.match(r"http://(localhost|127\.0\.0\.1)(:|/|$)", value):
             add(
                 "AF006",
                 "medium",
-                "A remote endpoint uses plaintext HTTP.",
+                "외부 엔드포인트가 평문 HTTP를 사용합니다.",
                 path,
-                "Use HTTPS and validate the remote endpoint identity.",
+                "HTTPS를 사용하고 외부 엔드포인트의 신원을 검증하세요.",
             )
 
     for path, value in _walk(config):
@@ -180,9 +180,9 @@ def scan_config(config: dict[str, Any], source: str = "config") -> list[Finding]
                 add(
                     "AF007",
                     "medium",
-                    f"npx package {package!r} is not pinned to a version.",
+                    f"npx 패키지 {package!r}의 버전이 고정되지 않았습니다.",
                     path + ("args",),
-                    "Pin an exact reviewed package version and update it deliberately.",
+                    "검토한 정확한 버전을 고정하고 의도적으로 업데이트하세요.",
                 )
 
     unique = {(f.rule_id, f.location, f.message): f for f in findings}
@@ -228,4 +228,3 @@ def to_sarif(findings: list[Finding]) -> dict[str, Any]:
             }
         ],
     }
-

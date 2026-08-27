@@ -1,11 +1,10 @@
-# Contributing
+# 기여 안내
 
-Thanks for helping improve this project.
+프로젝트 개선에 참여해 주셔서 감사합니다.
 
-1. Open an issue describing the bug or proposed behavior.
-2. Create a focused branch and add tests for behavior changes.
-3. Run `python -m unittest discover -s tests -v` and the CLI smoke test documented in the README.
-4. Submit a pull request with a concise explanation and sample input/output when relevant.
+1. 버그나 제안 동작을 설명하는 이슈를 먼저 작성해 주세요.
+2. 범위가 분명한 브랜치에서 변경하고, 동작이 바뀌면 테스트도 추가해 주세요.
+3. `python -m unittest discover -s tests -v`와 README의 예제 명령을 실행해 주세요.
+4. 변경 이유와 대표 입력·출력을 간결하게 설명한 Pull Request를 제출해 주세요.
 
-Please do not commit real credentials, personal data, or confidential fixtures. Synthetic and openly licensed examples are preferred.
-
+실제 인증정보, 개인정보, 기밀 자료는 커밋하지 마세요. 합성 데이터나 공개 라이선스가 명확한 예제를 사용해 주세요.
